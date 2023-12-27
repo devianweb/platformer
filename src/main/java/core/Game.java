@@ -1,6 +1,5 @@
 package core;
 
-import javax.sound.midi.SysexMessage;
 
 public class Game implements Runnable {
 
