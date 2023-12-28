@@ -1,6 +1,6 @@
 package entities;
 
-import utils.Constants;
+import utils.Constants.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,9 +12,10 @@ public class Player extends Entity {
 
     private BufferedImage[][] animations;
     private int animationTick, animationIndex, animationSpeed = 15;
-    private int playerAction = Constants.PlayerConstants.IDLE;
-    private int playerDirection = -1;
-    private boolean moving = false;
+    private int playerAction = PlayerConstants.IDLE;
+    private boolean moving = false, attacking = false;
+    private boolean left, right, up, down;
+    private final float playerSpeed = 2.0f;
 
 
     public Player(float x, float y) {
@@ -32,32 +33,48 @@ public class Player extends Entity {
         g.drawImage(animations[playerAction][animationIndex], (int) x, (int) y, 256, 160, null);
     }
 
-    public void setDirection(int direction) {
-        this.playerDirection = direction;
-        moving = true;
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
     private void updatePosition() {
-        if (moving) {
-            switch (playerDirection) {
-                case Constants.Directions.LEFT -> this.x -= 5;
-                case Constants.Directions.UP -> this.y -= 5;
-                case Constants.Directions.RIGHT -> this.x += 5;
-                case Constants.Directions.DOWN -> this.y += 5;
-            }
+
+        moving = false;
+
+        if (left && !right) {
+            x-= playerSpeed;
+            moving = true;
+        } else if (right && !left) {
+            x+= playerSpeed;
+            moving = true;
+        }
+
+        if (up && !down) {
+            y-= playerSpeed;
+            moving = true;
+        } else if (down && !up) {
+            y+= playerSpeed;
+            moving = true;
         }
     }
 
     private void setAnimation() {
+        int startAnimation = playerAction;
+
         if (moving) {
-            playerAction = Constants.PlayerConstants.RUNNING;
+            playerAction = PlayerConstants.RUNNING;
         } else {
-            playerAction = Constants.PlayerConstants.IDLE;
+            playerAction = PlayerConstants.IDLE;
         }
+
+        if (attacking) {
+            playerAction = PlayerConstants.ATTACK_1;
+        }
+
+        if (startAnimation != playerAction) {
+            resetAnimation();
+        }
+    }
+
+    private void resetAnimation() {
+        animationTick = 0;
+        animationIndex = 0;
     }
 
     private void updateAnimationTick() {
@@ -65,8 +82,9 @@ public class Player extends Entity {
         if(animationTick >= animationSpeed) {
             animationIndex++;
             animationTick = 0;
-            if (animationIndex >= Constants.PlayerConstants.getSpriteAmount(playerAction)) {
+            if (animationIndex >= PlayerConstants.getSpriteAmount(playerAction)) {
                 animationIndex = 0;
+                attacking = false;
             }
         }
     }
@@ -92,5 +110,52 @@ public class Player extends Entity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+
+    public boolean isAttacking() {
+        return attacking;
+    }
+
+    public void setAttacking(boolean attacking) {
+        this.attacking = attacking;
+    }
+
+    public void resetDirectionBooleans() {
+        left = false;
+        right = false;
+        up = false;
+        down = false;
     }
 }
