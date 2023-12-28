@@ -2,6 +2,9 @@ package core;
 
 
 import entities.Player;
+import gamestates.Gamestate;
+import gamestates.Playing;
+import gamestates.Menu;
 import levels.LevelManager;
 
 import java.awt.*;
@@ -14,8 +17,8 @@ public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
-    private Player player;
-    private LevelManager levelManager;
+    private Playing playing;
+    private Menu menu;
 
     public static final float SCALE = 2f;
     public static final int TILES_DEFAULT_SIZE = 32;
@@ -35,9 +38,8 @@ public class Game implements Runnable {
     }
 
     private void initialiseClasses() {
-        levelManager = new LevelManager(this);
-        player = new Player(200, 200, (int) (64 * SCALE), (int) (40 * SCALE));
-        player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
+        menu = new Menu(this);
+        playing = new Playing(this);
     }
 
     private void startGameLoop() {
@@ -46,13 +48,25 @@ public class Game implements Runnable {
     }
 
     public void update() {
-        player.update();
-        levelManager.update();
+        switch(Gamestate.state) {
+            case MENU -> {
+                menu.update();
+            }
+            case PLAYING -> {
+                playing.update();
+            }
+        }
     }
 
     public void render(Graphics g) {
-        levelManager.draw(g);
-        player.render(g);
+        switch(Gamestate.state) {
+            case MENU -> {
+                menu.draw(g);
+            }
+            case PLAYING -> {
+                playing.draw(g);
+            }
+        }
     }
 
     @Override
@@ -97,11 +111,17 @@ public class Game implements Runnable {
         }
     }
 
-    public Player getPlayer() {
-        return player;
+    public void windowFocusLost() {
+        if(Gamestate.state == Gamestate.PLAYING) {
+            playing.getPlayer().resetDirectionBooleans();
+        }
     }
 
-    public void windowFocusLost() {
-        player.resetDirectionBooleans();
+    public Playing getPlaying() {
+        return playing;
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 }
