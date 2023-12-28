@@ -1,6 +1,10 @@
 package core;
 
 
+import entities.Player;
+
+import java.awt.*;
+
 public class Game implements Runnable {
 
     private final int FPS_SET = 120;
@@ -9,12 +13,18 @@ public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
+    private Player player;
 
     public Game() {
-        this.gamePanel = new GamePanel();
+        intialiseClasses();
+        this.gamePanel = new GamePanel(this);
         this.gameWindow = new GameWindow(gamePanel);
         this.gamePanel.requestFocus();
         startGameLoop();
+    }
+
+    private void intialiseClasses() {
+        player = new Player(200, 200);
     }
 
     private void startGameLoop() {
@@ -23,14 +33,17 @@ public class Game implements Runnable {
     }
 
     public void update() {
-        gamePanel.updateGame();
+        player.update();
+    }
+
+    public void render(Graphics g) {
+        player.render(g);
     }
 
     @Override
     public void run() {
         double timePerFrame = 1000000000.0 / FPS_SET;
         double timePerUpdate = 1000000000.0 / UPS_SET;
-
 
         int frames = 0;
         int updates = 0;
@@ -67,5 +80,9 @@ public class Game implements Runnable {
                 updates = 0;
             }
         }
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
