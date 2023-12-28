@@ -61,7 +61,7 @@ public class HelpMethods {
     }
 
     public static boolean isEntityOnFloor(Rectangle2D.Float hitbox, int[][] levelData) {
-        if(isSolid(hitbox.x, hitbox.y + hitbox.height, levelData)) {
+        if(isSolid(hitbox.x, hitbox.y + hitbox.height + 1, levelData)) {
            return true;
         } else if (isSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height, levelData)){
            return true;

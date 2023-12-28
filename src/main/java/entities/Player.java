@@ -16,7 +16,7 @@ public class Player extends Entity {
     private int playerAction = PlayerConstants.IDLE;
     private boolean moving = false, attacking = false;
     private boolean left, right, up, down, jump;
-    private final float playerSpeed = 2.0f * Game.SCALE;
+    private final float playerSpeed = 1.5f * Game.SCALE;
     private int[][] levelData;
     private float xDrawOffset = 21 * Game.SCALE;
     private float yDrawOffset = 4 * Game.SCALE;
@@ -40,8 +40,6 @@ public class Player extends Entity {
         updateAnimationTick();
         setAnimation();
         updatePosition();
-
-        System.out.println("inAir = " + inAir);
     }
 
     public void render(Graphics g) {
