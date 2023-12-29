@@ -20,7 +20,7 @@ public class Game implements Runnable {
     private Playing playing;
     private Menu menu;
 
-    public static final float SCALE = 2f;
+    public static final float SCALE = 1.5f;
     public static final int TILES_DEFAULT_SIZE = 32;
     public static final int TILES_IN_WIDTH = 26;
     public static final int TILES_IN_HEIGHT = 14;
@@ -66,6 +66,7 @@ public class Game implements Runnable {
             case PLAYING -> {
                 playing.draw(g);
             }
+            default -> System.exit(0);
         }
     }
 
