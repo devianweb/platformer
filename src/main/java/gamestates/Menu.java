@@ -88,13 +88,11 @@ public class Menu extends State implements StateMethods{
     public void mouseMoved(MouseEvent e) {
         for(MenuButton mb : buttons) {
             mb.setMouseOver(false);
-            System.out.println("set mouseOver to false");
         }
 
         for(MenuButton mb : buttons) {
             if (isIn(e, mb)) {
                 mb.setMouseOver(true);
-                System.out.println("set mouseOver to true");
                 break;
             }
         }
