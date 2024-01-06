@@ -14,7 +14,7 @@ public class Playing extends State implements StateMethods{
     private Player player;
     private LevelManager levelManager;
     private PauseOverlay pauseOverlay;
-    private boolean paused = true;
+    private boolean paused = false;
 
     public Playing(Game game) {
         super(game);
@@ -25,14 +25,17 @@ public class Playing extends State implements StateMethods{
         levelManager = new LevelManager(game);
         player = new Player(200, 200, (int) (64 * Game.SCALE), (int) (40 * Game.SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
-        pauseOverlay = new PauseOverlay();
+        pauseOverlay = new PauseOverlay(this);
     }
 
     @Override
     public void update() {
-        levelManager.update();
-        player.update();
-        pauseOverlay.update();
+        if (!paused) {
+            levelManager.update();
+            player.update();
+        } else {
+            pauseOverlay.update();
+        }
     }
 
     @Override
@@ -40,7 +43,9 @@ public class Playing extends State implements StateMethods{
         levelManager.draw(g);
         player.render(g);
 
-        pauseOverlay.draw(g);
+        if (paused) {
+            pauseOverlay.draw(g);
+        }
     }
 
     @Override
@@ -53,7 +58,6 @@ public class Playing extends State implements StateMethods{
     @Override
     public void mousePressed(MouseEvent e) {
         if (paused) {
-            System.out.println("mouse pressed");
             pauseOverlay.mousePressed(e);
         }
     }
@@ -61,7 +65,6 @@ public class Playing extends State implements StateMethods{
     @Override
     public void mouseReleased(MouseEvent e) {
         if (paused) {
-            System.out.println("mouse released");
             pauseOverlay.mouseReleased(e);
         }
     }
@@ -73,13 +76,19 @@ public class Playing extends State implements StateMethods{
         }
     }
 
+    public void mouseDragged(MouseEvent e) {
+        if(paused) {
+            pauseOverlay.mouseDragged(e);
+        }
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A -> player.setLeft(true);
             case KeyEvent.VK_D -> player.setRight(true);
             case KeyEvent.VK_SPACE -> player.setJump(true);
-            case KeyEvent.VK_BACK_SPACE -> Gamestate.state = Gamestate.MENU;
+            case KeyEvent.VK_ESCAPE -> paused = !paused;
             default -> System.out.println("unrecognised key");
         }
     }
@@ -95,6 +104,14 @@ public class Playing extends State implements StateMethods{
 
     public Player getPlayer() {
         return player;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     public void windowFocusLost() {
