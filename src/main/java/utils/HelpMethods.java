@@ -3,6 +3,7 @@ package utils;
 import core.Game;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 
 public class HelpMethods {
 
@@ -21,7 +22,8 @@ public class HelpMethods {
     }
 
     private static boolean isSolid(float x, float y, int[][] levelData) {
-        if (x < 0 || x >= Game.GAME_WIDTH) {
+        int maxWidth = Arrays.stream(levelData).findFirst().map(width -> width.length * Game.TILES_SIZE).orElse(0);
+        if (x < 0 || x >= maxWidth) {
             return true;
         } else if (y < 0 || y >= Game.GAME_HEIGHT) {
             return true;
